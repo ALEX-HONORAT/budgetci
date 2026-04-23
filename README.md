@@ -7,6 +7,35 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Requirements
+
+- PHP 8.3+
+- Node.js 20.19+ or 22.12+
+
+If you use `nvm`, run:
+
+```bash
+nvm use
+```
+
+## Railway Deploy
+
+This project is configured for Railway with `nixpacks.toml`.
+
+Set these environment variables in Railway before the first deploy:
+
+- `APP_ENV=production`
+- `APP_DEBUG=false`
+- `APP_URL=https://your-app.up.railway.app`
+- `APP_KEY` generated with `php artisan key:generate --show`
+- `DB_CONNECTION=mysql`
+- `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`
+- `SESSION_DRIVER=file`
+- `CACHE_STORE=file`
+- `QUEUE_CONNECTION=sync`
+
+The startup command runs migrations automatically on boot.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
