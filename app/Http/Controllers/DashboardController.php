@@ -128,7 +128,7 @@ class DashboardController extends Controller
         
         // Mois avec des revenus
         $moisAvecRevenus = DB::table('incomes')
-            ->selectRaw('DATE_FORMAT(date, "%Y-%m") as month')
+            ->selectRaw("strftime('%Y-%m', date) as month")
             ->where('user_id', $user->id)
             ->groupBy('month')
             ->havingRaw('SUM(amount) > 0')  // On ignore les mois avec des revenus à 0
@@ -137,7 +137,7 @@ class DashboardController extends Controller
         
         // Mois avec des dépenses
         $moisAvecDepenses = DB::table('expenses')
-            ->selectRaw('DATE_FORMAT(date, "%Y-%m") as month')
+            ->selectRaw("strftime('%Y-%m', date) as month")
             ->where('user_id', $user->id)
             ->groupBy('month')
             ->havingRaw('SUM(amount) > 0')  // On ignore les mois avec des dépenses à 0
