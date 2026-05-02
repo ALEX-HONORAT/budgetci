@@ -125,10 +125,17 @@ class DashboardController extends Controller
         // 10. HISTORIQUE DES MOIS DISPONIBLES
         // ==============================================
         // On récupère tous les mois qui contiennent au moins un revenu OU une dépense
+        $dateFormatFunction = match (DB::getDriverName()) {
+            'mysql', 'mariadb' => "DATE_FORMAT(date, '%Y-%m')",
+            'sqlite' => "strftime('%Y-%m', date)",
+            'pgsql' => "to_char(date, 'YYYY-MM')",
+            'sqlsrv' => "FORMAT(date, 'yyyy-MM')",
+            default => "DATE_FORMAT(date, '%Y-%m')",
+        };
         
         // Mois avec des revenus
         $moisAvecRevenus = DB::table('incomes')
-            ->selectRaw("strftime('%Y-%m', date) as month")
+            ->selectRaw("{$dateFormatFunction} as month")
             ->where('user_id', $user->id)
             ->groupBy('month')
             ->havingRaw('SUM(amount) > 0')  // On ignore les mois avec des revenus à 0
@@ -137,7 +144,7 @@ class DashboardController extends Controller
         
         // Mois avec des dépenses
         $moisAvecDepenses = DB::table('expenses')
-            ->selectRaw("strftime('%Y-%m', date) as month")
+            ->selectRaw("{$dateFormatFunction} as month")
             ->where('user_id', $user->id)
             ->groupBy('month')
             ->havingRaw('SUM(amount) > 0')  // On ignore les mois avec des dépenses à 0
