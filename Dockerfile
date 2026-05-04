@@ -30,4 +30,23 @@ RUN mkdir -p \
 
 RUN echo 'ServerName localhost' >> /etc/apache2/apache2.conf
 
+# Configure Apache VirtualHost to serve Laravel from /public
+RUN { \
+    echo '<VirtualHost *:${PORT:-80}>'; \
+    echo '    DocumentRoot /var/www/html/public'; \
+    echo '    <Directory /var/www/html/public>'; \
+    echo '        AllowOverride All'; \
+    echo '        Require all granted'; \
+    echo '        Options -Indexes +FollowSymLinks'; \
+    echo '    </Directory>'; \
+    echo '    ErrorLog ${APACHE_LOG_DIR}/error.log'; \
+    echo '    CustomLog ${APACHE_LOG_DIR}/access.log combined'; \
+    echo '</VirtualHost>'; \
+} > /etc/apache2/sites-available/laravel.conf \
+    && a2ensite laravel.conf \
+    && a2dissite 000-default.conf
+
+# Allow Apache to listen on Railway's dynamic PORT
+RUN sed -i 's/Listen 80/Listen ${PORT:-80}/' /etc/apache2/ports.conf
+
 EXPOSE 80
